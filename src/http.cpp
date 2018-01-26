@@ -74,11 +74,13 @@ uv_stream_t* createPipeServer(uv_loop_t* pLoop, const std::string& name,
     umask(oldMask);
 
   if (r) {
+    err_printf("createPipeServer: %s\n", uv_strerror(r));
     delete (boost::shared_ptr<Socket>*)pSocket->handle.stream.data;
     return NULL;
   }
   r = uv_listen((uv_stream_t*)&pSocket->handle.stream, 128, &on_request);
   if (r) {
+    err_printf("createPipeServer: %s\n", uv_strerror(r));
     delete (boost::shared_ptr<Socket>*)pSocket->handle.stream.data;
     return NULL;
   }
@@ -127,16 +129,19 @@ uv_stream_t* createTcpServer(uv_loop_t* pLoop, const std::string& host,
   struct sockaddr_in address = {0};
   int r = uv_ip4_addr(host.c_str(), port, &address);
   if (r) {
+    err_printf("createTcpServer: %s\n", uv_strerror(r));
     delete (boost::shared_ptr<Socket>*)pSocket->handle.stream.data;
     return NULL;
   }
   r = uv_tcp_bind(&pSocket->handle.tcp, (sockaddr*)&address, 0);
   if (r) {
+    err_printf("createTcpServer: %s\n", uv_strerror(r));
     delete (boost::shared_ptr<Socket>*)pSocket->handle.stream.data;
     return NULL;
   }
   r = uv_listen((uv_stream_t*)&pSocket->handle.stream, 128, &on_request);
   if (r) {
+    err_printf("createTcpServer: %s\n", uv_strerror(r));
     delete (boost::shared_ptr<Socket>*)pSocket->handle.stream.data;
     return NULL;
   }
